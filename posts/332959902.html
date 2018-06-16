@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="zChange blog" />
+<link rel="stylesheet" href="\css\style.css" />
+
+<title>
+发布订阅模式ES6实现 | zChange
+</title>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="center">
+    <h1>
+      <a href="\">zChange</a>
+    </h1>
+    <p>zChange blog</p>
+    <div class="menu">
+    
+      <a href="\categories\">categories</a>
+    
+      <a href="\tags\">tags</a>
+    
+      <a href="\about\">about</a>
+    
+    </div>
+  </div>
+</div>
+
+
+
+<div id="post" class="center">
+  <h1>发布订阅模式ES6实现</h1>
+  <p>
+    <a href="https://github.com/zChanges">zChanges</a>
+    Posted at
+    June 16, 2018
+    . - <a href="\categories\0\">uncategorized</a>
+  </p>
+
+  <div class="content"><h2 id="发布订阅模式es6实现">发布订阅模式ES6实现</h2><blockquote>
+<p>举个例子：微信订阅一个公众号，当公众号发布文章时，只要公众号发布文章，订阅者会第一时间接受到消息。（一对多的关系，对象发生变化，所有订阅者都会被通知到）
+<img src="https://github.com/zChanges/zChange_blog/blob/master/image/js/subscriber.png?raw=true" alt="subscriber"></p>
+</blockquote>
+<h2 id="思路">思路：</h2><ol>
+<li>定义一个缓存Map对象存储所有订阅对象(_subscribers)</li><li>定义_index下标，可订阅同一个主题多次，而不会被覆盖</li><li>on方法存储订阅者和回调至缓存列表中(可多次订阅一个主体)，返回订阅者名称和对应key值</li><li>emit发布消息，执行对应订阅者回调，通过Map.get获取到</li><li>destroy销毁指定订阅者，通过Map.delete直接销毁订阅者</li><li>remove删除，清空所有缓存订阅者信息。</li></ol>
+<blockquote>
+<p>采用es6中Map更方便的处理订阅者，代码的减少以及可读性。</p>
+</blockquote>
+<h2 id="项目中哪里可以用到">项目中哪里可以用到</h2><blockquote>
+<ol>
+<li>全局广播消息</li><li>框架内跨组件之间的通讯</li></ol>
+</blockquote>
+<h3 id="优点">优点</h3><blockquote>
+<p>可以用于异步编程（其中执行回调这一阶段和Promise的实现一致）
+完全解耦出两者的关系，发布者只需要关注何时发布消息，订阅者只需订阅即可</p>
+</blockquote>
+<h3 id="缺点">缺点</h3><blockquote>
+<p>缺点：如果消息一直没有发生，订阅者会一直存在内存中。</p>
+</blockquote>
+<h2 id="具体实现">具体实现</h2>
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre><span class="hljs-keyword">class</span> <span class="hljs-title">Event</span> {
+  constructor() {
+    <span class="hljs-keyword">this</span>._subscribers = <span class="hljs-keyword">new</span> Map();
+    <span class="hljs-keyword">this</span>.__index = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-comment">/**
+   * 将订阅者信息存入list
+   * @param {String} eventName 事件名称
+   * @param {fn} callback 订阅回调
+   * 通过Map来存取对应的订阅者
+   * 监听同一个主体，下一次的不会覆盖上一次的监听
+   * 返回订阅者名称，和对应的下标，可供后面销毁
+   */</span>
+  subscribe(eventName, callback) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> eventName !== <span class="hljs-string">'string'</span> || <span class="hljs-keyword">typeof</span> callback !== <span class="hljs-string">'function'</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(<span class="hljs-string">'parameter error'</span>)
+    }
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._subscribers.has(eventName)) {
+      <span class="hljs-keyword">this</span>._subscribers.<span class="hljs-keyword">set</span>(eventName,<span class="hljs-keyword">new</span> Map());
+    }
+    <span class="hljs-comment">// 订阅同一个主题通过_index不会覆盖上一次。</span>
+    <span class="hljs-keyword">this</span>._subscribers.<span class="hljs-keyword">get</span>(eventName).<span class="hljs-keyword">set</span>(++<span class="hljs-keyword">this</span>._index,callback);
+    <span class="hljs-keyword">return</span> [eventName, <span class="hljs-keyword">this</span>._index]
+  }
+
+
+  <span class="hljs-keyword">on</span>(eventName, callback) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.subscribe(eventName, callback);
+  }
+
+  <span class="hljs-comment">/**
+   * 发布信息
+   * @param {String} eventName 订阅者名称
+   * @param {any} args 参数
+   */</span>
+  emit(eventName, ...args) {
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>._subscribers.has(eventName)){
+      <span class="hljs-keyword">const</span> eveMap = <span class="hljs-keyword">this</span>._subscribers.<span class="hljs-keyword">get</span>(eventName);
+      eveMap.forEach((map) =&gt;map(...args));
+    }<span class="hljs-keyword">else</span>{
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Error(`The subscription parameter ${eventName} does not exist`)
+    }
+
+  }
+
+  <span class="hljs-comment">/**
+   * 销毁对应订阅者
+   * @param {String|Object} event 
+   */</span>
+  destroy(<span class="hljs-keyword">event</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">event</span> === <span class="hljs-string">'string'</span>) {
+      <span class="hljs-comment">// 直接销毁对应订阅者</span>
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._subscribers.has(<span class="hljs-keyword">event</span>)) {
+        <span class="hljs-keyword">this</span>._subscribers.delete(<span class="hljs-keyword">event</span>)
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">event</span> === <span class="hljs-string">'object'</span>) {
+      <span class="hljs-comment">// 通过订阅者名词和下标，销毁其中某一个订阅者</span>
+      <span class="hljs-keyword">const</span> [eventName, key] = <span class="hljs-keyword">event</span>;
+      <span class="hljs-keyword">this</span>._subscribers.<span class="hljs-keyword">get</span>(eventName).delete(key);
+    }
+  }
+
+  <span class="hljs-comment">/**
+   * 清除所有订阅者
+   */</span>
+  <span class="hljs-keyword">remove</span>() {
+    <span class="hljs-keyword">this</span>._subscribers.clear();
+  }
+
+}
+
+<span class="hljs-keyword">const</span> $<span class="hljs-keyword">event</span> = <span class="hljs-keyword">new</span> Event();
+<span class="hljs-keyword">const</span> ev1 = $<span class="hljs-keyword">event</span>.<span class="hljs-keyword">on</span>(<span class="hljs-string">'aa'</span>, (...agrs) =&gt; {
+  console.log(...agrs);
+  console.log(<span class="hljs-number">111</span>);
+})
+<span class="hljs-keyword">const</span> ev2 = $<span class="hljs-keyword">event</span>.<span class="hljs-keyword">on</span>(<span class="hljs-string">'aa'</span>, (...agrs) =&gt; {
+  console.log(...agrs);
+  console.log(<span class="hljs-number">222</span>);
+})
+setTimeout(() =&gt; {
+  $<span class="hljs-keyword">event</span>.emit(<span class="hljs-string">'aa'</span>, <span class="hljs-string">'1'</span>, <span class="hljs-string">'2'</span>);
+  $<span class="hljs-keyword">event</span>.destroy();
+  $<span class="hljs-keyword">event</span>.<span class="hljs-keyword">remove</span>();
+}, <span class="hljs-number">500</span>)</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  
+  <div class="label">
+    
+    <div><a href="\tags\966340373\">#js</a></div>
+    
+  </div>
+  
+
+  <div class="relate">
+    
+
+    
+    
+    <a rel="next" href="\posts\295802575.html">原型 or 原型链 →</a>
+    
+  </div>
+</div>
+
+
+<div class="footer">
+  <div class="center">
+    &copy; 2018 zChange .
+    <a target="_blank" href="https://github.com/acyortjs/acyort">Powered by Github | AcyOrt</a> .
+    <a target="_blank" href="https://github.com/zChanges/zChange_blog/issues">Source</a>
+    <sup>5</sup>
+  </div>
+</div>
+
+
+
+
+
+</body>
+</html>
