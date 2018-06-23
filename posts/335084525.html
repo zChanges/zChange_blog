@@ -1,0 +1,375 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="zChange blog" />
+<link rel="stylesheet" href="\css\style.css" />
+
+<title>
+单元测试 | zChange
+</title>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="center">
+    <h1>
+      <a href="\">zChange</a>
+    </h1>
+    <p>zChange blog</p>
+    <div class="menu">
+    
+      <a href="\categories\">categories</a>
+    
+      <a href="\tags\">tags</a>
+    
+      <a href="\about\">about</a>
+    
+    </div>
+  </div>
+</div>
+
+
+
+<div id="post" class="center">
+  <h1>单元测试</h1>
+  <p>
+    <a href="https://github.com/zChanges">zChanges</a>
+    Posted at
+    June 23, 2018
+    . - <a href="\categories\0\">uncategorized</a>
+  </p>
+
+  <div class="content"><h1 id="单元测试">单元测试</h1><h2 id="tddbdd的理解">TDD、BDD的理解</h2><blockquote>
+<p><strong>TDD(测试驱动开发)</strong>
+在开发人员开发功能之前，先编写单元测试用例代码，来推动开发的进行。
+目的：不是为了写出大覆盖率的测试代码，而是测试函数逻辑的各种可能性，辅助提高代码的质量.帮助发现错误.</p>
+<p><strong>BDD(行为驱动开发)</strong>
+开发人员和测试产品客户等进行讨论,使用自然的语言去描述,取得预期的软件行为.
+目的：让产品运行结果符合预期行为，避免表达不一致带来的问题(整合开发和产品测试)</p>
+</blockquote>
+<h2 id="工具">工具</h2><ul>
+<li><code>Mocha</code>(测试框架)</li><li><code>should.js</code>(断言库)、或采用node自带的<code>assert</code></li><li><code>Karma</code>(自动化单元测试框架)</li></ul>
+<h2 id="测试用例">测试用例</h2><blockquote>
+<p>全局安装<code>mocha</code> <code>npm install mocha -g</code>
+采用<code>node</code>自带的<code>assert</code></p>
+</blockquote>
+<h3 id="equal">equal</h3><blockquote>
+<p><code>equal</code>：判断是否相等</p>
+
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>  describe('#<span class="hljs-keyword">All</span>', <span class="hljs-keyword">function</span> <span class="hljs-title"></span>() {
+    it('should <span class="hljs-keyword">return</span> <span class="hljs-type">-1</span> <span class="hljs-keyword">when</span> the value <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> present', <span class="hljs-keyword">function</span> <span class="hljs-title"></span>() {
+      // 判断两个值是否相等
+      assert.equal(-1, [1, 2, 3].indexOf(4))
+    })
+  });</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <h3 id="deepequaldeepstrictequal">deepEqual || deepStrictEqual</h3><p><code>deepEqual</code>废弃采用<code>deepStrictEqual</code>代替：判断深度是否相等(会递归判断子对象是否相等)</p>
+
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>  describe(<span class="hljs-string">'#All'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    it(<span class="hljs-string">'a和b应当深度相等'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">var</span> a = {
+          c: {
+            e: <span class="hljs-number">1</span>
+          }
+        }
+        <span class="hljs-keyword">var</span> b = {
+          c: {
+            e: <span class="hljs-number">1</span>
+          }
+        }
+      assert.deepStrictEqual(a, b)
+    })
+  });</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </blockquote>
+<h3 id="strictequalnotstrictequal">StrictEqual || notStrictEqual</h3><blockquote>
+<p>是否全等  是否全不等</p>
+
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>  describe(<span class="hljs-string">'#All'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span></span> {
+    it(<span class="hljs-string">'is equality'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(done)</span></span> {
+      <span class="hljs-built_in">assert</span>.strictEqual(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>);
+      <span class="hljs-built_in">assert</span>.notStrictEqual(<span class="hljs-number">1</span>, <span class="hljs-string">'1'</span>);
+    });
+  });</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </blockquote>
+<h3 id="throws">throws</h3><blockquote>
+<p>捕获错误
+```javascript
+describe(&#39;assert&#39;, function () {
+  it(&#39;可以捕获并验证函数fn的错误&#39;, function () {
+    function fn() {
+      xxx;
+    }
+    assert.throws(
+      fn,
+      (err) =&gt; {
+        if (/xxx is not defined/.test(err)) {
+          return true;
+        }
+      },
+      &#39;未捕获到错误&#39;
+    );</p>
+</blockquote>
+<p>  })
+})</p>
+
+      <div class="hljs">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>
+### ifError
+&gt;判断value是否为false,如果为false则通过，如果为ture则抛出信息为value的错误。
+&#x60;&#x60;&#x60;javascript
+describe(&#39;assert&#39;, function () {
+  it(&#39;ifError&#39;, function () {
+    assert.fail();
+    &#x2F;&#x2F; 抛出 AssertionError [ERR_ASSERTION]: Failed
+    assert.fail(&#39;失败&#39;);
+    &#x2F;&#x2F; 抛出 AssertionError [ERR_ASSERTION]: 失败
+    assert.fail(new TypeError(&#39;失败&#39;));
+    &#x2F;&#x2F; 抛出 TypeError: 失败
+  })
+})</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <h3 id="done">done()</h3><blockquote>
+<p>测试异步代码（Mocha api）
+<code>mocha</code>支持Promise,不需要done直接返回Promise即可
+```javascript
+  describe(&#39;#All&#39;, function () {
+    it(&#39;should save without error&#39;, function(done) {
+      var user = new User(&#39;Luna&#39;);
+      user.save(function() {
+        done();
+      });
+    });
+  });</p>
+</blockquote>
+<p>  it(&#39;异步请求应该返回一个对象&#39;, function() {
+    return fetch(&#39;xxxxxx&#39;)
+      .then(function(res) {
+        return res.json();
+      });
+  });</p>
+
+      <div class="hljs">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>
+### 钩子
+&gt;&#x60;mocha&#x60;提供了钩子函数
+&#x60;&#x60;&#x60;javascript
+  before(function() {
+    &#x2F;&#x2F; 在本区块的所有测试用例之前执行
+  });
+
+  after(function() {
+    &#x2F;&#x2F;在本区块的所有测试用例之后执行
+  });
+
+  beforeEach(function() {
+    &#x2F;&#x2F; 在本区块的每个测试用例之前执行
+  });
+
+  afterEach(function() {
+    &#x2F;&#x2F; 在本区块的每个测试用例之后执行
+  });
+});</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <h2 id="karma">Karma</h2><ul>
+<li><p>安装： </p>
+<blockquote>
+<p>npm install karma karma-chrome-launcher --save-dev</p>
+</blockquote>
+</li><li><p>初始化
+<code>karma init</code>
+```html</p>
+</li><li>Which testing framework do you want to use ? (mocha)  选择测试框架</li><li>Do you want to use Require.js ? (no)是否用Require</li><li>Do you want to capture any browsers automatically ? (Chrome) 选择浏览器</li><li>What is the location of your source and test files ? 设置测试文件和依赖文件(<a href="https://cdn.bootcss.com/jquery/2.2.4/jquery.js">https://cdn.bootcss.com/jquery/2.2.4/jquery.js</a>, node_modules/should/should.js, test/**.js)</li><li>Should any of the files included by the previous patterns be excluded ? 是否应该排除前一种模式所包含的任何文件 不太懂直接忽略吧</li><li>Do you want Karma to watch all the files and run the tests on change ? (yes) 是否监听文件是否变化,试试刷新
+```</li><li>运行测试
+      <div class="hljs">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>karma start</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </li></ul>
+<h2 id="travisci">Travis CI</h2><blockquote>
+<p>Travis CI 是在软件开发领域中的一个在线的，分布式的持续集成服务，用来构建及测试在GitHub托管的代码。</p>
+</blockquote>
+<ol>
+<li>先用Github登录</li><li>进入profile页面，里面会同步你github上所有的项目,选择你需要自动化的项目
+<img src="https://github.com/zChanges/zChange_blog/blob/master/image/js/Travis.png?raw=true" alt="travis"></li><li>在项目根目录添加<code>.travis.yml</code>文件,添加配置，提交到github上就可以自动构建了
+<img src="https://github.com/zChanges/zChange_blog/blob/master/image/js/travis1.png?raw=true" alt="travis1"></li></ol>
+<h3 id="配置travis">配置Travis</h3>
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre><span class="hljs-symbol">language:</span> node_js <span class="hljs-comment">// 设置语言</span>
+<span class="hljs-symbol">node_js:</span>          <span class="hljs-comment">// 设置node版本</span>
+  - <span class="hljs-string">"9.3"</span>
+<span class="hljs-symbol">addons:</span>           <span class="hljs-comment">// 扩展 </span>
+<span class="hljs-symbol"> chrome:</span> stable   <span class="hljs-comment">// 扩展chrome,构建安装chrome(stable稳定版本也可以设定版本)</span>
+<span class="hljs-symbol">git:</span>              <span class="hljs-comment">// Git克隆深度</span>
+<span class="hljs-symbol">  depth:</span> <span class="hljs-number">1</span>        <span class="hljs-comment">// 如果一个构建在队列，那么在推送新提交时，Travis不会构建队列中的提交。</span>
+<span class="hljs-symbol">install:</span>          <span class="hljs-comment">// 自定义安装步骤</span>
+  - npm install -g karma-cli
+  - npm install
+<span class="hljs-symbol">cache:</span>            <span class="hljs-comment">// 缓存node_modules中的包</span>
+<span class="hljs-symbol">  directories:</span>
+    - <span class="hljs-string">"node_modules"</span></pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <h3 id="在使用travis跑karma的时候设置chrome启动器">在使用Travis跑Karma的时候设置chrome启动器</h3><blockquote>
+<p>安装<code>npm install karma-chrome-launcher --save-dev</code>
+使用<code>Karma</code>的<code>customlaunchers</code>插件，您可以将其添加</p>
+
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre> ....
+  browsers: [<span class="hljs-string">'Chrome'</span>,<span class="hljs-string">'Chrome_without_security'</span>],
+  customLaunchers: {
+    <span class="hljs-symbol">Chrome_without_security</span>: {
+      base: <span class="hljs-string">'Chrome'</span>,
+      flags: [<span class="hljs-string">'--disable-web-security'</span>]
+    }
+  }
+ ...</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </blockquote>
+<h3 id="在使用travis跑karma的时候设置只运行一次">在使用Travis跑Karma的时候设置只运行一次</h3><blockquote>
+<p>-<code>package.json</code> 设置<code>&quot;test&quot;: &quot;karma start --browsers Chrome,Chrome_without_security --single-run&quot;</code></p>
+</blockquote>
+<p>或者在<code>karma.conf.js</code>中设置</p>
+
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre><span class="hljs-built_in">..</span><span class="hljs-built_in">..</span>
+  let configuration = {
+    <span class="hljs-built_in">..</span>.
+  }
+  <span class="hljs-keyword">if</span> (process.env.TRAVIS) {
+     configuration.singleRun = <span class="hljs-literal">true</span>;
+  }
+  config.<span class="hljs-builtin-name">set</span>(configuration);
+<span class="hljs-built_in">..</span>.</pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  
+  <div class="label">
+    
+    <div><a href="\tags\973049201\">#test</a></div>
+    
+  </div>
+  
+
+  <div class="relate">
+    
+
+    
+    
+    <a rel="next" href="\posts\332959902.html">发布订阅模式ES6实现 →</a>
+    
+  </div>
+</div>
+
+
+<div class="footer">
+  <div class="center">
+    &copy; 2018 zChange .
+    <a target="_blank" href="https://github.com/acyortjs/acyort">Powered by Github | AcyOrt</a> .
+    <a target="_blank" href="https://github.com/zChanges/zChange_blog/issues">Source</a>
+    <sup> 1</sup>
+  </div>
+</div>
+
+
+
+
+
+</body>
+</html>
