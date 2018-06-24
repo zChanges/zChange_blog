@@ -273,6 +273,9 @@ describe(&#39;assert&#39;, function () {
   - <span class="hljs-string">"9.3"</span>
 <span class="hljs-symbol">addons:</span>           <span class="hljs-comment">// 扩展 </span>
 <span class="hljs-symbol"> chrome:</span> stable   <span class="hljs-comment">// 扩展chrome,构建安装chrome(stable稳定版本也可以设定版本)</span>
+<span class="hljs-symbol">before_script:</span>    <span class="hljs-comment">// xvfb 模拟显示，运行界面测试 https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI</span>
+- export DISPLAY=:<span class="hljs-number">99.0</span>
+- sh -e <span class="hljs-meta-keyword">/etc/</span>init.d/xvfb start
 <span class="hljs-symbol">git:</span>              <span class="hljs-comment">// Git克隆深度</span>
 <span class="hljs-symbol">  depth:</span> <span class="hljs-number">1</span>        <span class="hljs-comment">// 如果一个构建在队列，那么在推送新提交时，Travis不会构建队列中的提交。</span>
 <span class="hljs-symbol">install:</span>          <span class="hljs-comment">// 自定义安装步骤</span>
@@ -281,6 +284,25 @@ describe(&#39;assert&#39;, function () {
 <span class="hljs-symbol">cache:</span>            <span class="hljs-comment">// 缓存node_modules中的包</span>
 <span class="hljs-symbol">  directories:</span>
     - <span class="hljs-string">"node_modules"</span></pre></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <h3 id="travisci上运行需要图形用户界面的测试需要使用xvfb">Travis CI上运行需要图形用户界面的测试需要使用<code>xvfb</code></h3>
+      <div class="hljs javascript">
+        <table>
+          <tbody>
+            <tr>
+              <td class="line">
+                <pre><span>1</span>
+</pre>
+              </td>
+              <td class="code"><pre>/<span class="hljs-regexp">/ https:/</span><span class="hljs-regexp">/docs.travis-ci.com/user</span><span class="hljs-regexp">/gui-and-headless-browsers/</span><span class="hljs-comment">#Using-xvfb-to-Run-Tests-That-Require-a-GUI</span>
+<span class="hljs-symbol">addons:</span>           /<span class="hljs-regexp">/ 扩展 
+ chrome: stable   /</span><span class="hljs-regexp">/ 扩展chrome,构建安装chrome(stable稳定版本也可以设定版本)
+before_script:    /</span><span class="hljs-regexp">/ xvfb 模拟显示，运行界面测试 
+- export DISPLAY=:99.0
+- sh -e /etc</span><span class="hljs-regexp">/init.d/xvfb</span> start</pre></td>
             </tr>
           </tbody>
         </table>
@@ -363,7 +385,7 @@ describe(&#39;assert&#39;, function () {
     &copy; 2018 zChange .
     <a target="_blank" href="https://github.com/acyortjs/acyort">Powered by Github | AcyOrt</a> .
     <a target="_blank" href="https://github.com/zChanges/zChange_blog/issues">Source</a>
-    <sup> 1</sup>
+    <sup>8</sup>
   </div>
 </div>
 
